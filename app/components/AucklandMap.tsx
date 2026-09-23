@@ -32,6 +32,7 @@ const restaurantSearchRegions = [
 
 type MapStatus = "loading" | "ready" | "config" | "error";
 
+/** Loads Auckland restaurant data and displays clustered or individual map markers based on zoom. */
 export default function AucklandMap() {
   const mapElement = useRef<HTMLDivElement>(null);
   const hasApiKey = Boolean(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
@@ -139,6 +140,7 @@ export default function AucklandMap() {
           const showIndividualMarkers = zoom >= 14;
           markers.forEach((marker) => marker.setMap(showIndividualMarkers ? map : null));
 
+          // Rebuild the grid clusters as the zoom changes so nearby suburbs remain readable.
           clusterMarkers.forEach((marker) => marker.setMap(null));
           clusterMarkers = [];
 
@@ -192,8 +194,41 @@ export default function AucklandMap() {
               },
             });
             clusterMarker.addListener("click", () => {
-              map.setZoom(Math.min((map.getZoom() ?? 11) + 2, 17));
-              map.panTo(center);
+              const nextZoom = Math.min((map.getZoom() ?? 11) + 2, 14);
+              const nextGridSize = { lat: gridSize.lat / 2, lng: gridSize.lng / 2 };
+              const nextClusters = new globalThis.Map<
+                string,
+                { places: typeof restaurantPlaces; center: { lat: number; lng: number } }
+              >();
+
+              places.forEach((place) => {
+                const location = place.location!;
+                const key = `${Math.floor(location.lat() / nextGridSize.lat)}:${Math.floor(location.lng() / nextGridSize.lng)}`;
+                const nextCluster = nextClusters.get(key);
+
+                if (nextCluster) {
+                  nextCluster.places.push(place);
+                  nextCluster.center.lat += location.lat();
+                  nextCluster.center.lng += location.lng();
+                } else {
+                  nextClusters.set(key, {
+                    places: [place],
+                    center: { lat: location.lat(), lng: location.lng() },
+                  });
+                }
+              });
+
+              const densestCluster = Array.from(nextClusters.values()).reduce(
+                (densest, candidate) =>
+                  candidate.places.length > densest.places.length ? candidate : densest,
+              );
+              const targetCenter = {
+                lat: densestCluster.center.lat / densestCluster.places.length,
+                lng: densestCluster.center.lng / densestCluster.places.length,
+              };
+
+              map.setZoom(nextZoom);
+              map.panTo(targetCenter);
             });
             clusterMarkers.push(clusterMarker);
           });

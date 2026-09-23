@@ -1,6 +1,7 @@
 import Link from "next/link";
 import AucklandMapLoader from "./components/AucklandMapLoader";
 
+/** Renders the restaurant discovery homepage and its interactive Auckland map. */
 export default function Home() {
   return (
     <main className="page-shell">

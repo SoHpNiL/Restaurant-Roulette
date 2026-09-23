@@ -11,7 +11,7 @@ export default function Home() {
           </span>
           Restaurant Roulette
         </Link>
-        <span className="nav-note">A better way to pick dinner</span>
+        <span className="nav-note">A better way to pick lunch</span>
       </nav>
 
       <section className="hero" aria-labelledby="hero-title">

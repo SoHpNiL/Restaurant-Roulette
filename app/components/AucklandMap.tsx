@@ -10,6 +10,25 @@ const aucklandBounds = {
   east: 175.15,
   west: 174.55,
 };
+const restaurantSearchRegions = [
+  { lat: -36.72, lng: 174.69 },
+  { lat: -36.72, lng: 174.82 },
+  { lat: -36.72, lng: 174.96 },
+  { lat: -36.79, lng: 174.62 },
+  { lat: -36.79, lng: 174.76 },
+  { lat: -36.79, lng: 174.9 },
+  { lat: -36.79, lng: 175.04 },
+  { lat: -36.86, lng: 174.62 },
+  { lat: -36.86, lng: 174.76 },
+  { lat: -36.86, lng: 174.9 },
+  { lat: -36.86, lng: 175.04 },
+  { lat: -36.93, lng: 174.62 },
+  { lat: -36.93, lng: 174.76 },
+  { lat: -36.93, lng: 174.9 },
+  { lat: -36.93, lng: 175.04 },
+  { lat: -37.0, lng: 174.76 },
+  { lat: -37.0, lng: 174.9 },
+];
 
 type MapStatus = "loading" | "ready" | "config" | "error";
 
@@ -31,7 +50,9 @@ export default function AucklandMap() {
     }
 
     let markers: google.maps.Marker[] = [];
+    let clusterMarkers: google.maps.Marker[] = [];
     let infoWindow: google.maps.InfoWindow | undefined;
+    let removeZoomListener: google.maps.MapsEventListener | undefined;
     let cancelled = false;
 
     const loadMap = async () => {
@@ -56,53 +77,131 @@ export default function AucklandMap() {
           fullscreenControl: false,
           zoomControl: true,
           styles: [
-            { featureType: "poi.business", stylers: [{ visibility: "off" }] },
+            { featureType: "poi", stylers: [{ visibility: "off" }] },
             { featureType: "transit", stylers: [{ visibility: "simplified" }] },
           ],
         });
 
         infoWindow = new google.maps.InfoWindow();
-        const placesService = new google.maps.places.PlacesService(map);
-
-        placesService.nearbySearch(
-          {
-            location: aucklandCenter,
-            radius: 15000,
-            type: "restaurant",
-          },
-          (places, searchStatus) => {
-            if (cancelled) {
-              return;
-            }
-
-            if (searchStatus !== google.maps.places.PlacesServiceStatus.OK || !places?.length) {
-              setStatus("error");
-              setMessage("Google could not find restaurants right now. Please try again later.");
-              return;
-            }
-
-            markers = places
-              .filter((place) => place.geometry?.location)
-              .map((place) => {
-                const marker = new google.maps.Marker({
-                  map,
-                  position: place.geometry!.location,
-                  title: place.name,
-                });
-
-                marker.addListener("click", () => {
-                  infoWindow?.setContent(
-                    `<strong>${place.name ?? "Restaurant"}</strong>${place.vicinity ? `<br>${place.vicinity}` : ""}`,
-                  );
-                  infoWindow?.open({ map, anchor: marker });
-                });
-
-                return marker;
-              });
-
-            setStatus("ready");
-          },
+        const { Place } = (await importLibrary("places")) as google.maps.PlacesLibrary;
+        const placeSearches = await Promise.all(
+          restaurantSearchRegions.map((center) =>
+            Place.searchNearby({
+              fields: ["displayName", "formattedAddress", "location"],
+              includedPrimaryTypes: ["restaurant"],
+              locationRestriction: {
+                center,
+                radius: 8000,
+              },
+              maxResultCount: 20,
+            }),
+          ),
         );
+
+        if (cancelled) {
+          return;
+        }
+
+        const restaurantPlaces = Array.from(
+          new globalThis.Map(
+            placeSearches
+              .flatMap(({ places }) => places)
+              .filter((place) => place.location)
+              .map((place) => [place.id, place]),
+          ).values(),
+        );
+
+        if (!restaurantPlaces.length) {
+          setStatus("error");
+          setMessage("Google could not find restaurants right now. Please try again later.");
+          return;
+        }
+
+        markers = restaurantPlaces.map((place) => {
+          const marker = new google.maps.Marker({
+            map: null,
+            position: place.location!,
+            title: place.displayName ?? "Restaurant",
+          });
+
+          marker.addListener("click", () => {
+            infoWindow?.setContent(
+              `<strong>${place.displayName ?? "Restaurant"}</strong>${place.formattedAddress ? `<br>${place.formattedAddress}` : ""}`,
+            );
+            infoWindow?.open({ map, anchor: marker });
+          });
+
+          return marker;
+        });
+
+        const updateMarkers = () => {
+          const zoom = map.getZoom() ?? 11;
+          const showIndividualMarkers = zoom >= 14;
+          markers.forEach((marker) => marker.setMap(showIndividualMarkers ? map : null));
+
+          clusterMarkers.forEach((marker) => marker.setMap(null));
+          clusterMarkers = [];
+
+          if (showIndividualMarkers) {
+            return;
+          }
+
+          const gridSize = zoom <= 11 ? { lat: 0.09, lng: 0.14 } : { lat: 0.045, lng: 0.07 };
+          const clusters = new globalThis.Map<
+            string,
+            { places: typeof restaurantPlaces; center: { lat: number; lng: number } }
+          >();
+
+          restaurantPlaces.forEach((place) => {
+            const location = place.location!;
+            const key = `${Math.floor(location.lat() / gridSize.lat)}:${Math.floor(location.lng() / gridSize.lng)}`;
+            const cluster = clusters.get(key);
+
+            if (cluster) {
+              cluster.places.push(place);
+              cluster.center.lat += location.lat();
+              cluster.center.lng += location.lng();
+            } else {
+              clusters.set(key, {
+                places: [place],
+                center: { lat: location.lat(), lng: location.lng() },
+              });
+            }
+          });
+
+          clusters.forEach(({ places, center }) => {
+            center.lat /= places.length;
+            center.lng /= places.length;
+            const clusterMarker = new google.maps.Marker({
+              map,
+              position: center,
+              title: `${places.length} restaurants in this area. Click to zoom in.`,
+              icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: "#d8f36a",
+                fillOpacity: 1,
+                strokeColor: "#1d2824",
+                strokeWeight: 3,
+                scale: Math.min(30, 18 + places.length),
+              },
+              label: {
+                text: `${places.length}`,
+                color: "#1d2824",
+                fontWeight: "800",
+                fontSize: "13px",
+              },
+            });
+            clusterMarker.addListener("click", () => {
+              map.setZoom(Math.min((map.getZoom() ?? 11) + 2, 17));
+              map.panTo(center);
+            });
+            clusterMarkers.push(clusterMarker);
+          });
+        };
+
+        removeZoomListener = map.addListener("zoom_changed", updateMarkers);
+        updateMarkers();
+        setStatus("ready");
       } catch {
         if (!cancelled) {
           setStatus("error");
@@ -115,7 +214,9 @@ export default function AucklandMap() {
 
     return () => {
       cancelled = true;
+      removeZoomListener?.remove();
       markers.forEach((marker) => marker.setMap(null));
+      clusterMarkers.forEach((marker) => marker.setMap(null));
       infoWindow?.close();
     };
   }, []);
@@ -133,7 +234,7 @@ export default function AucklandMap() {
           <span>{message}</span>
         </div>
       )}
-      <p className="map-caption">Drag to browse neighbourhoods · Tap a marker to explore</p>
+      <p className="map-caption">Click the location count to zoom in · Tap a marker to explore</p>
     </div>
   );
 }

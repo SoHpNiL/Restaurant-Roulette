@@ -75,9 +75,9 @@ a {
 
 .hero {
   display: grid;
-  width: min(1080px, 100%);
+  width: min(1240px, 100%);
   margin: auto;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.9fr);
+  grid-template-columns: minmax(0, 0.8fr) minmax(420px, 1.2fr);
   align-items: center;
   gap: clamp(40px, 9vw, 130px);
   padding: 70px 0;
@@ -211,7 +211,7 @@ h1 span {
 
 .map-card {
   position: relative;
-  min-height: 430px;
+  min-height: 560px;
   overflow: hidden;
   border: 10px solid var(--ink);
   border-radius: 34px;
@@ -252,8 +252,7 @@ h1 span {
 }
 
 .auckland-map {
-  height: 100%;
-  min-height: 410px;
+  height: 540px;
   width: 100%;
 }
 
@@ -350,7 +349,7 @@ h1 span {
   }
 
   .auckland-map {
-    min-height: 310px;
+    height: 310px;
   }
 
   .wheel {

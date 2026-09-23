@@ -182,7 +182,7 @@ export default function AucklandMap() {
                 fillOpacity: 1,
                 strokeColor: "#1d2824",
                 strokeWeight: 3,
-                scale: Math.min(30, 18 + places.length),
+                scale: Math.min(22, 12 + places.length * 0.35),
               },
               label: {
                 text: `${places.length}`,

@@ -1,0 +1,365 @@
+:root {
+  --ink: #1d2824;
+  --muted: #68716c;
+  --cream: #f7f4ed;
+  --lime: #d8f36a;
+  --coral: #f47e65;
+  --teal: #7ec4b6;
+  --lavender: #c6b8e8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--cream);
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.page-shell {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 28px 6vw 24px;
+}
+
+.nav,
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.brand-mark {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--lime);
+  font-size: 1.2rem;
+}
+
+.nav-note,
+.footer {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.hero {
+  display: grid;
+  width: min(1080px, 100%);
+  margin: auto;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.9fr);
+  align-items: center;
+  gap: clamp(40px, 9vw, 130px);
+  padding: 70px 0;
+}
+
+.eyebrow {
+  margin: 0 0 20px;
+  color: #a16a55;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+h1 {
+  max-width: 640px;
+  margin: 0;
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-weight: 800;
+  letter-spacing: -0.09em;
+  line-height: 0.88;
+}
+
+h1 span {
+  display: block;
+  color: #b9a3db;
+}
+
+.intro {
+  max-width: 410px;
+  margin: 30px 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  border: 0;
+  border-radius: 100px;
+  background: var(--ink);
+  color: var(--cream);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 16px 20px 16px 24px;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.primary-button span {
+  color: var(--lime);
+  font-size: 1.3rem;
+}
+
+.primary-button:hover {
+  background: #30413a;
+  transform: translateY(-2px);
+}
+
+.wheel-card {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 430px;
+  border-radius: 44% 56% 52% 48% / 50% 42% 58% 50%;
+  background: #e8e2d8;
+  transform: rotate(4deg);
+}
+
+.wheel {
+  position: relative;
+  display: grid;
+  width: min(330px, 78%);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 12px solid var(--ink);
+  border-radius: 50%;
+  background: conic-gradient(var(--coral) 0deg 90deg, var(--lime) 90deg 180deg, var(--teal) 180deg 270deg, var(--lavender) 270deg);
+  box-shadow: 8px 10px 0 var(--ink);
+  transform: rotate(-4deg);
+}
+
+.wheel-center {
+  display: grid;
+  width: 76px;
+  height: 76px;
+  place-items: center;
+  border: 7px solid var(--ink);
+  border-radius: 50%;
+  background: var(--cream);
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.wheel-label {
+  position: absolute;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.label-one { top: 17%; left: 17%; transform: rotate(-45deg); }
+.label-two { top: 17%; right: 17%; transform: rotate(45deg); }
+.label-three { bottom: 17%; right: 16%; transform: rotate(-45deg); }
+.label-four { bottom: 17%; left: 12%; transform: rotate(45deg); }
+
+.wheel-pointer {
+  position: absolute;
+  z-index: 1;
+  top: 29px;
+  width: 0;
+  height: 0;
+  border-right: 17px solid transparent;
+  border-left: 17px solid transparent;
+  border-top: 34px solid var(--ink);
+}
+
+.wheel-caption {
+  position: absolute;
+  right: 17%;
+  bottom: 27px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: rotate(-4deg);
+}
+
+.map-card {
+  position: relative;
+  min-height: 430px;
+  overflow: hidden;
+  border: 10px solid var(--ink);
+  border-radius: 34px;
+  background: #dfe6d7;
+  box-shadow: 8px 10px 0 var(--ink);
+}
+
+.map-heading {
+  position: absolute;
+  z-index: 500;
+  top: 16px;
+  right: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.map-kicker,
+.map-location {
+  border-radius: 100px;
+  background: var(--cream);
+  box-shadow: 3px 3px 0 rgb(29 40 36 / 18%);
+  color: var(--ink);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 9px 12px;
+  text-transform: uppercase;
+}
+
+.map-location {
+  color: #a16a55;
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+.auckland-map {
+  height: 100%;
+  min-height: 410px;
+  width: 100%;
+}
+
+.map-caption {
+  position: absolute;
+  z-index: 500;
+  right: 16px;
+  bottom: 12px;
+  left: 16px;
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.7rem;
+  font-weight: 700;
+  pointer-events: none;
+  text-align: center;
+}
+
+.map-loading {
+  display: grid;
+  min-height: 430px;
+  place-items: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.map-status {
+  position: absolute;
+  z-index: 400;
+  top: 50%;
+  right: 28px;
+  left: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+  transform: translateY(-50%);
+}
+
+.map-status-config,
+.map-status-error {
+  border-radius: 16px;
+  background: rgb(247 244 237 / 92%);
+  padding: 16px;
+}
+
+.map-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #b9a3db;
+  border-top-color: var(--ink);
+  border-radius: 50%;
+  animation: map-spin 800ms linear infinite;
+}
+
+@keyframes map-spin {
+  to { transform: rotate(360deg); }
+}
+
+.footer {
+  border-top: 1px solid #ddd8ce;
+  padding-top: 18px;
+}
+
+@media (max-width: 700px) {
+  .page-shell {
+    padding: 22px 7vw 20px;
+  }
+
+  .nav-note {
+    display: none;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 70px 0 50px;
+  }
+
+  h1 {
+    font-size: clamp(3.5rem, 17vw, 6rem);
+  }
+
+  .wheel-card {
+    min-height: 330px;
+  }
+
+  .map-card {
+    min-height: 330px;
+  }
+
+  .auckland-map {
+    min-height: 310px;
+  }
+
+  .wheel {
+    width: min(270px, 78%);
+  }
+
+  .footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+}

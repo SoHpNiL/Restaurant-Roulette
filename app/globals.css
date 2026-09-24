@@ -92,6 +92,51 @@ a {
   letter-spacing: 0.02em;
 }
 
+.scroll-header {
+  position: fixed;
+  z-index: 1100;
+  top: 18px;
+  right: 5vw;
+  left: 5vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border: 3px solid var(--ink);
+  border-radius: 100px;
+  background: rgb(255 253 246 / 88%);
+  box-shadow: 4px 4px 0 var(--ink);
+  opacity: 0;
+  padding: 7px 10px 7px 18px;
+  pointer-events: none;
+  transform: translateY(-18px);
+  transition: opacity 180ms ease, transform 180ms ease;
+  visibility: hidden;
+}
+
+.scroll-header.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+.scroll-header-brand {
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.scroll-header-auth {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 3px 8px;
+}
+
 .home-hero {
   display: grid;
   width: min(1240px, 100%);
@@ -360,7 +405,7 @@ a {
   width: fit-content;
   align-items: center;
   gap: 10px;
-  margin: 0 auto 76px;
+  margin: 42px auto 34px;
   color: var(--ink);
   font-size: 0.72rem;
   font-weight: 900;
@@ -430,7 +475,7 @@ a {
 .map-preview-section {
   display: grid;
   width: min(1240px, 100%);
-  margin: 0 auto 80px;
+  margin: 72px auto 80px;
   grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
   align-items: center;
   gap: clamp(34px, 8vw, 110px);
@@ -1094,13 +1139,13 @@ h1 span {
   }
 
   .home-scroll-cue {
-    margin-bottom: 52px;
+    margin: 16px auto 24px;
   }
 
   .map-preview-section {
     grid-template-columns: 1fr;
     gap: 28px;
-    margin-bottom: 56px;
+    margin: 40px auto 56px;
   }
 
   .map-preview {
@@ -1111,6 +1156,12 @@ h1 span {
     top: 12px;
     right: 12px;
     left: 12px;
+  }
+
+  .scroll-header {
+    top: 12px;
+    right: 5vw;
+    left: 5vw;
   }
 
   .map-page-brand {

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import ScrollHeader from "./components/ScrollHeader";
 
 const rotatingWords = ["Gamble", "Discover", "Explore",];
 const heroImages = [
@@ -84,6 +85,7 @@ export default function Home() {
 
   return (
     <main className="home-page">
+      <ScrollHeader />
       <header className="home-header">
         <Link className="brand" href="/" aria-label="Restaurant Roulette home">
           <span>Restaurant Roulette</span>

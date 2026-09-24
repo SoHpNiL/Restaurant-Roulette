@@ -18,19 +18,10 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Map and Google Places setup
+## Map setup
 
-The homepage uses the OSM Bright basemap through Leaflet and the
-Google Places API to find restaurant locations around Auckland. Create a
-`.env.local` file with a browser-restricted Google API key:
-
-```bash
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-```
-
-Enable **Places API** for the key in Google Cloud and restrict it to the
-application domains before deploying. OpenStreetMap data is © OpenStreetMap
-contributors.
+The homepage uses the OSM Bright basemap through Leaflet. No API keys are
+required. OpenStreetMap data is © OpenStreetMap contributors.
 
 ## Scripts
 

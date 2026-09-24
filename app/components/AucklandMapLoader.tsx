@@ -7,7 +7,7 @@ const AucklandMap = dynamic(() => import("./AucklandMap"), {
   loading: () => <div className="map-card map-loading">Loading Auckland map…</div>,
 });
 
-/** Defers the browser-only Google Maps component until client-side rendering. */
+/** Defers the browser-only Leaflet component until client-side rendering. */
 export default function AucklandMapLoader() {
   return <AucklandMap />;
 }

@@ -157,6 +157,35 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <a className="home-scroll-cue" href="#map-preview">
+        <span>Scroll to explore</span>
+      </a>
+      <section className="map-preview-section" id="map-preview" aria-labelledby="map-preview-title">
+        <div className="map-preview-copy">
+          <p className="home-kicker">Around the corner</p>
+          <h2 id="map-preview-title">Your next table is closer than you think.</h2>
+          <p>
+            Browse local places, follow your curiosity, and let the map do the
+            choosing.
+          </p>
+          <Link className="map-preview-link" href="/map">
+            Open the live map <span aria-hidden="true">↗</span>
+          </Link>
+        </div>
+        <div className="map-preview" aria-label="Illustrated static map of Auckland">
+          <div className="map-preview-water" />
+          <div className="map-preview-block map-preview-block-one" />
+          <div className="map-preview-block map-preview-block-two" />
+          <div className="map-preview-block map-preview-block-three" />
+          <div className="map-preview-road map-preview-road-one" />
+          <div className="map-preview-road map-preview-road-two" />
+          <div className="map-preview-road map-preview-road-three" />
+          <span className="map-preview-pin map-preview-pin-one">✦</span>
+          <span className="map-preview-pin map-preview-pin-two">✦</span>
+          <span className="map-preview-pin map-preview-pin-three">✦</span>
+          <span className="map-preview-label">Auckland</span>
+        </div>
+      </section>
       <footer className="home-footer">
         <span>Made for curious appetites</span>
         <span className="">Support Auckland, Not Fast Food</span>

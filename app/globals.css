@@ -42,6 +42,194 @@ a {
   padding: 28px 6vw 24px;
 }
 
+.home-page {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 28px 6vw 24px;
+}
+
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.home-header-note {
+  color: var(--muted);
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+}
+
+.home-hero {
+  display: grid;
+  width: min(1240px, 100%);
+  margin: auto;
+  grid-template-columns: minmax(0, 0.9fr) minmax(340px, 1.1fr);
+  align-items: center;
+  gap: clamp(40px, 10vw, 150px);
+  padding: 70px 0;
+}
+
+.home-copy {
+  position: relative;
+  z-index: 1;
+}
+
+.home-copy h1 {
+  max-width: 700px;
+}
+
+.rotating-word {
+  display: block;
+  color: var(--coral);
+  transform-origin: center top;
+  animation: flip-word 650ms ease both;
+}
+
+.rotating-word-exit {
+  animation: fade-word-out 300ms ease both;
+}
+
+.home-copy h1 span:not(.rotating-word) {
+  display: block;
+}
+
+.home-intro {
+  max-width: 410px;
+  margin: 30px 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.home-cta {
+  padding-right: 18px;
+}
+
+.home-art {
+  position: relative;
+  display: grid;
+  min-height: 480px;
+  place-items: center;
+  isolation: isolate;
+}
+
+.home-art::before {
+  position: absolute;
+  z-index: -1;
+  width: min(430px, 85%);
+  aspect-ratio: 1;
+  border-radius: 45% 55% 63% 37% / 48% 40% 60% 52%;
+  background: var(--teal);
+  content: "";
+  transform: rotate(-9deg);
+}
+
+.home-art-sun {
+  position: absolute;
+  top: 5%;
+  right: 7%;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--lime);
+}
+
+.home-art-plate {
+  display: grid;
+  width: min(330px, 70%);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 12px solid var(--ink);
+  border-radius: 50%;
+  background: var(--cream);
+  box-shadow: 10px 12px 0 var(--ink);
+  transform: rotate(8deg);
+}
+
+.home-art-plate-inner {
+  display: grid;
+  width: 75%;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--coral);
+}
+
+.home-art-fork {
+  color: var(--cream);
+  font-size: clamp(4rem, 8vw, 7rem);
+  line-height: 0;
+  transform: rotate(-20deg);
+}
+
+.home-art-leaf {
+  position: absolute;
+  color: var(--ink);
+  font-size: 7rem;
+  transform: translate(56px, -54px) rotate(30deg);
+}
+
+.home-art-label {
+  position: absolute;
+  border-radius: 100px;
+  background: var(--cream);
+  box-shadow: 3px 3px 0 rgb(29 40 36 / 18%);
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 10px 14px;
+  text-transform: uppercase;
+}
+
+.home-art-label-top {
+  top: 20%;
+  left: 4%;
+  transform: rotate(-8deg);
+}
+
+.home-art-label-bottom {
+  right: 1%;
+  bottom: 17%;
+  color: #a16a55;
+  transform: rotate(8deg);
+}
+
+.home-footer {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #ddd8ce;
+  padding-top: 18px;
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+@keyframes flip-word {
+  from {
+    opacity: 0;
+    transform: perspective(420px) rotateX(90deg);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(420px) rotateX(0);
+  }
+}
+
+@keyframes fade-word-out {
+  from {
+    opacity: 1;
+    transform: perspective(420px) rotateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: perspective(420px) rotateX(-90deg);
+  }
+}
+
 .map-only-page {
   position: relative;
   min-height: 100vh;
@@ -451,6 +639,51 @@ h1 span {
 }
 
 @media (max-width: 700px) {
+  .home-page {
+    padding: 22px 7vw 20px;
+  }
+
+  .home-header-note {
+    display: none;
+  }
+
+  .home-hero {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 70px 0 42px;
+  }
+
+  .home-copy h1 {
+    font-size: clamp(3.5rem, 17vw, 6rem);
+  }
+
+  .home-art {
+    min-height: 300px;
+  }
+
+  .home-art-sun {
+    width: 70px;
+    height: 70px;
+  }
+
+  .home-art-plate {
+    width: min(260px, 70%);
+  }
+
+  .home-art-label-top {
+    top: 8%;
+  }
+
+  .home-art-label-bottom {
+    bottom: 6%;
+  }
+
+  .home-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
   .map-page-header {
     top: 12px;
     right: 12px;

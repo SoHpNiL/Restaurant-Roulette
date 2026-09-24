@@ -37,28 +37,22 @@ export default function Home() {
 
       window.setTimeout(() => {
         setWordIndex((currentIndex) => (currentIndex + 1) % rotatingWords.length);
+        const nextImageIndex = (imageIndexRef.current + 1) % heroImages.length;
+        const carousel = carouselRef.current;
+        const slide = carousel?.children[nextImageIndex];
+
+        imageIndexRef.current = nextImageIndex;
+        setImageIndex(nextImageIndex);
+
+        if (carousel && slide) {
+          carousel.scrollLeft = (slide as HTMLElement).offsetLeft;
+        }
+
         setIsChanging(false);
       }, 300);
     }, 4000);
 
     return () => window.clearInterval(rotation);
-  }, []);
-
-  useEffect(() => {
-    const carouselRotation = window.setInterval(() => {
-      const nextIndex = (imageIndexRef.current + 1) % heroImages.length;
-
-      imageIndexRef.current = nextIndex;
-      setImageIndex(nextIndex);
-      const carousel = carouselRef.current;
-      const slide = carousel?.children[nextIndex];
-
-      if (carousel && slide) {
-        carousel.scrollLeft = (slide as HTMLElement).offsetLeft;
-      }
-    }, 4000);
-
-    return () => window.clearInterval(carouselRotation);
   }, []);
 
   function scrollToImage(index: number) {
@@ -94,6 +88,13 @@ export default function Home() {
         <Link className="brand" href="/" aria-label="Restaurant Roulette home">
           <span>Restaurant Roulette</span>
         </Link>
+        <div className="home-auth" aria-label="Account options">
+          <span>Log in</span>
+          <span className="home-auth-divider" aria-hidden="true">
+            /
+          </span>
+          <span>Sign up</span>
+        </div>
       </header>
       <section className="home-hero" aria-labelledby="home-title">
         <div className="home-copy">
@@ -114,7 +115,6 @@ export default function Home() {
           </p>
           <Link className="spinner-button" href="/map" aria-label="Let's go to the restaurant map">
             <span className="spinner" aria-hidden="true">
-              <span className="spinner-pointer" />
               <span className="spinner-wheel">
                 <span className="spinner-center" />
               </span>
@@ -159,7 +159,7 @@ export default function Home() {
       </section>
       <footer className="home-footer">
         <span>Made for curious appetites</span>
-        <span>Explore Auckland ↗</span>
+        <span className="">Support Auckland, Not Fast Food</span>
       </footer>
     </main>
   );

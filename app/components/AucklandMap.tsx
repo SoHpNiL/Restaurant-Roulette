@@ -3,36 +3,36 @@
 import { useEffect, useRef, useState } from "react";
 import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
 
-const aucklandCenter = { lat: -36.8485, lng: 174.7633 };
-const aucklandBounds = {
-  north: -36.65,
-  south: -37.15,
-  east: 175.15,
-  west: 174.55,
-};
+const aucklandCenter: [number, number] = [-36.8485, 174.7633];
+const aucklandBounds: [[number, number], [number, number]] = [
+  [-37.15, 174.55],
+  [-36.65, 175.15],
+];
 const restaurantSearchRegions = [
-  { lat: -36.72, lng: 174.69 },
-  { lat: -36.72, lng: 174.82 },
-  { lat: -36.72, lng: 174.96 },
-  { lat: -36.79, lng: 174.62 },
-  { lat: -36.79, lng: 174.76 },
-  { lat: -36.79, lng: 174.9 },
-  { lat: -36.79, lng: 175.04 },
-  { lat: -36.86, lng: 174.62 },
-  { lat: -36.86, lng: 174.76 },
-  { lat: -36.86, lng: 174.9 },
-  { lat: -36.86, lng: 175.04 },
-  { lat: -36.93, lng: 174.62 },
-  { lat: -36.93, lng: 174.76 },
-  { lat: -36.93, lng: 174.9 },
-  { lat: -36.93, lng: 175.04 },
-  { lat: -37.0, lng: 174.76 },
+  { lat: -36.73, lng: 174.7 },
+  { lat: -36.78, lng: 174.92 },
+  { lat: -36.85, lng: 174.65 },
+  { lat: -36.85, lng: 174.82 },
+  { lat: -36.94, lng: 174.72 },
   { lat: -37.0, lng: 174.9 },
 ];
 
 type MapStatus = "loading" | "ready" | "config" | "error";
 
-/** Loads Auckland restaurant data and displays clustered or individual map markers based on zoom. */
+function escapeHtml(value: string) {
+  return value.replace(/[&<>"']/g, (character) => {
+    const entities: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return entities[character];
+  });
+}
+
+/** Displays an OpenStreetMap basemap with restaurant locations found through Google Places. */
 export default function AucklandMap() {
   const mapElement = useRef<HTMLDivElement>(null);
   const hasApiKey = Boolean(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY);
@@ -50,98 +50,116 @@ export default function AucklandMap() {
       return;
     }
 
-    let markers: google.maps.Marker[] = [];
-    let clusterMarkers: google.maps.Marker[] = [];
-    let infoWindow: google.maps.InfoWindow | undefined;
-    let removeZoomListener: google.maps.MapsEventListener | undefined;
     let cancelled = false;
+    let cleanupMap: (() => void) | undefined;
 
     const loadMap = async () => {
       try {
+        const L = (await import("leaflet")).default;
         setOptions({ key: apiKey, v: "weekly" });
-        await importLibrary("maps");
-        await importLibrary("places");
+        const { Place } = (await importLibrary("places")) as google.maps.PlacesLibrary;
 
         if (cancelled || !mapElement.current) {
           return;
         }
 
-        const map = new google.maps.Map(mapElement.current, {
-          center: aucklandCenter,
-          zoom: 11,
+        const map = L.map(mapElement.current, {
+          maxBounds: L.latLngBounds(aucklandBounds),
+          maxBoundsViscosity: 1,
           minZoom: 10,
           maxZoom: 17,
-          restriction: { latLngBounds: aucklandBounds, strictBounds: true },
-          gestureHandling: "greedy",
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: false,
           zoomControl: true,
-          styles: [
-            { featureType: "poi", stylers: [{ visibility: "off" }] },
-            { featureType: "transit", stylers: [{ visibility: "simplified" }] },
-          ],
-        });
+        }).setView(aucklandCenter, 11);
 
-        infoWindow = new google.maps.InfoWindow();
-        const { Place } = (await importLibrary("places")) as google.maps.PlacesLibrary;
-        const placeSearches = await Promise.all(
-          restaurantSearchRegions.map((center) =>
-            Place.searchNearby({
-              fields: ["displayName", "formattedAddress", "location"],
-              includedPrimaryTypes: ["restaurant"],
-              locationRestriction: {
-                center,
-                radius: 8000,
-              },
-              maxResultCount: 20,
-            }),
-          ),
-        );
+        L.tileLayer("https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png", {
+          attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://stadiamaps.com/">Stadia Maps</a>',
+          maxZoom: 19,
+        }).addTo(map);
+
+        const placeSearches: PromiseSettledResult<{ places: google.maps.places.Place[] }>[] = [];
+
+        for (const center of restaurantSearchRegions) {
+          try {
+            placeSearches.push({
+              status: "fulfilled",
+              value: await Place.searchNearby({
+                fields: ["displayName", "formattedAddress", "location"],
+                includedPrimaryTypes: ["restaurant"],
+                locationRestriction: {
+                  center,
+                  radius: 8000,
+                },
+                maxResultCount: 20,
+              }),
+            });
+          } catch (error) {
+            placeSearches.push({ status: "rejected", reason: error });
+          }
+
+          await new Promise((resolve) => window.setTimeout(resolve, 1000));
+        }
 
         if (cancelled) {
+          map.remove();
           return;
         }
 
         const restaurantPlaces = Array.from(
           new globalThis.Map(
             placeSearches
-              .flatMap(({ places }) => places)
+              .filter(
+                (result): result is PromiseFulfilledResult<{ places: google.maps.places.Place[] }> =>
+                  result.status === "fulfilled",
+              )
+              .flatMap(({ value }) => value.places)
               .filter((place) => place.location)
               .map((place) => [place.id, place]),
           ).values(),
         );
 
         if (!restaurantPlaces.length) {
+          map.remove();
           setStatus("error");
-          setMessage("Google could not find restaurants right now. Please try again later.");
+          setMessage(
+            placeSearches.some((result) => result.status === "rejected")
+              ? "Google Places is rate-limiting requests. Please try again shortly."
+              : "Google could not find restaurants right now. Please try again later.",
+          );
           return;
         }
 
-        markers = restaurantPlaces.map((place) => {
-          const marker = new google.maps.Marker({
-            map: null,
-            position: place.location!,
+        const restaurantIcon = L.divIcon({
+          className: "restaurant-marker",
+          html: "🍽️",
+          iconAnchor: [17, 17],
+          iconSize: [34, 34],
+        });
+        const markers = restaurantPlaces.map((place) => {
+          const marker = L.marker([place.location!.lat(), place.location!.lng()], {
+            icon: restaurantIcon,
             title: place.displayName ?? "Restaurant",
           });
-
-          marker.addListener("click", () => {
-            infoWindow?.setContent(
-              `<strong>${place.displayName ?? "Restaurant"}</strong>${place.formattedAddress ? `<br>${place.formattedAddress}` : ""}`,
-            );
-            infoWindow?.open({ map, anchor: marker });
-          });
-
+          const name = escapeHtml(place.displayName ?? "Restaurant");
+          const address = place.formattedAddress
+            ? `<br><span>${escapeHtml(place.formattedAddress)}</span>`
+            : "";
+          marker.bindPopup(`<strong>${name}</strong>${address}`);
           return marker;
         });
+        let clusterMarkers: L.Marker[] = [];
 
         const updateMarkers = () => {
-          const zoom = map.getZoom() ?? 11;
+          const zoom = map.getZoom();
           const showIndividualMarkers = zoom >= 14;
-          markers.forEach((marker) => marker.setMap(showIndividualMarkers ? map : null));
-
-          // Rebuild the grid clusters as the zoom changes so nearby suburbs remain readable.
-          clusterMarkers.forEach((marker) => marker.setMap(null));
+          markers.forEach((marker) => {
+            if (showIndividualMarkers) {
+              marker.addTo(map);
+            } else {
+              marker.removeFrom(map);
+            }
+          });
+          clusterMarkers.forEach((marker) => marker.removeFrom(map));
           clusterMarkers = [];
 
           if (showIndividualMarkers) {
@@ -158,7 +176,6 @@ export default function AucklandMap() {
             const location = place.location!;
             const key = `${Math.floor(location.lat() / gridSize.lat)}:${Math.floor(location.lng() / gridSize.lng)}`;
             const cluster = clusters.get(key);
-
             if (cluster) {
               cluster.places.push(place);
               cluster.center.lat += location.lat();
@@ -174,73 +191,36 @@ export default function AucklandMap() {
           clusters.forEach(({ places, center }) => {
             center.lat /= places.length;
             center.lng /= places.length;
-            const clusterMarker = new google.maps.Marker({
-              map,
-              position: center,
+            const size = Math.min(44, 24 + places.length * 0.7);
+            const clusterMarker = L.marker([center.lat, center.lng], {
+              icon: L.divIcon({
+                className: "restaurant-cluster",
+                html: `${places.length}`,
+                iconAnchor: [size / 2, size / 2],
+                iconSize: [size, size],
+              }),
               title: `${places.length} restaurants in this area. Click to zoom in.`,
-              icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                fillColor: "#d8f36a",
-                fillOpacity: 1,
-                strokeColor: "#1d2824",
-                strokeWeight: 3,
-                scale: Math.min(22, 12 + places.length * 0.35),
-              },
-              label: {
-                text: `${places.length}`,
-                color: "#1d2824",
-                fontWeight: "800",
-                fontSize: "13px",
-              },
-            });
-            clusterMarker.addListener("click", () => {
-              const nextZoom = Math.min((map.getZoom() ?? 11) + 2, 14);
-              const nextGridSize = { lat: gridSize.lat / 2, lng: gridSize.lng / 2 };
-              const nextClusters = new globalThis.Map<
-                string,
-                { places: typeof restaurantPlaces; center: { lat: number; lng: number } }
-              >();
-
-              places.forEach((place) => {
-                const location = place.location!;
-                const key = `${Math.floor(location.lat() / nextGridSize.lat)}:${Math.floor(location.lng() / nextGridSize.lng)}`;
-                const nextCluster = nextClusters.get(key);
-
-                if (nextCluster) {
-                  nextCluster.places.push(place);
-                  nextCluster.center.lat += location.lat();
-                  nextCluster.center.lng += location.lng();
-                } else {
-                  nextClusters.set(key, {
-                    places: [place],
-                    center: { lat: location.lat(), lng: location.lng() },
-                  });
-                }
-              });
-
-              const densestCluster = Array.from(nextClusters.values()).reduce(
-                (densest, candidate) =>
-                  candidate.places.length > densest.places.length ? candidate : densest,
-              );
-              const targetCenter = {
-                lat: densestCluster.center.lat / densestCluster.places.length,
-                lng: densestCluster.center.lng / densestCluster.places.length,
-              };
-
-              map.setZoom(nextZoom);
-              map.panTo(targetCenter);
+            }).addTo(map);
+            clusterMarker.on("click", () => {
+              const nextZoom = Math.min(map.getZoom() + 2, 14);
+              const target = places[Math.floor(places.length / 2)].location!;
+              map.setView([target.lat(), target.lng()], nextZoom);
             });
             clusterMarkers.push(clusterMarker);
           });
         };
 
-        removeZoomListener = map.addListener("zoom_changed", updateMarkers);
+        map.on("zoomend", updateMarkers);
         updateMarkers();
         setStatus("ready");
+
+        cleanupMap = () => {
+          map.remove();
+        };
       } catch {
         if (!cancelled) {
           setStatus("error");
-          setMessage("Google Maps could not load. Check the API key and enabled Google services.");
+          setMessage("The map could not load. Check the API key and enabled Google Places service.");
         }
       }
     };
@@ -249,15 +229,12 @@ export default function AucklandMap() {
 
     return () => {
       cancelled = true;
-      removeZoomListener?.remove();
-      markers.forEach((marker) => marker.setMap(null));
-      clusterMarkers.forEach((marker) => marker.setMap(null));
-      infoWindow?.close();
+      cleanupMap?.();
     };
   }, []);
 
   return (
-    <div className="map-card" aria-label="Interactive Google map of Auckland restaurants">
+    <div className="map-card" aria-label="Interactive OpenStreetMap of Auckland restaurants">
       <div className="map-heading">
         <span className="map-kicker">Explore Auckland</span>
         <span className="map-location">Google Places ↗</span>
@@ -269,7 +246,7 @@ export default function AucklandMap() {
           <span>{message}</span>
         </div>
       )}
-      <p className="map-caption">Click the location count to zoom in · Tap a marker to explore</p>
+      <p className="map-caption">Click the restaurant count to zoom in · Tap a marker to explore</p>
     </div>
   );
 }

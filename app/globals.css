@@ -1,3 +1,5 @@
+@import "leaflet/dist/leaflet.css";
+
 :root {
   --ink: #1d2824;
   --muted: #68716c;
@@ -38,6 +40,27 @@ a {
   flex-direction: column;
   overflow: hidden;
   padding: 28px 6vw 24px;
+}
+
+.map-only-page {
+  min-height: 100vh;
+}
+
+.map-only-page .map-card {
+  min-height: 100vh;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.map-only-page .map-heading,
+.map-only-page .map-caption {
+  display: none;
+}
+
+.map-only-page .auckland-map {
+  height: 100vh;
+  min-height: 100vh;
 }
 
 .nav,
@@ -256,6 +279,34 @@ h1 span {
   width: 100%;
 }
 
+.restaurant-marker,
+.restaurant-cluster {
+  display: grid;
+  place-items: center;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 2px 2px 0 rgb(29 40 36 / 28%);
+  color: var(--ink);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.restaurant-cluster {
+  font-size: 0.8rem;
+}
+
+.leaflet-popup-content {
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.leaflet-popup-content span {
+  color: var(--muted);
+}
+
 .map-caption {
   position: absolute;
   z-index: 500;
@@ -301,6 +352,18 @@ h1 span {
   border-radius: 16px;
   background: rgb(247 244 237 / 92%);
   padding: 16px;
+}
+
+.map-status-loading {
+  left: 50%;
+  right: auto;
+  width: max-content;
+  max-width: calc(100% - 56px);
+  border-radius: 16px;
+  background: #fff;
+  padding: 16px;
+  box-shadow: 3px 3px 0 rgb(29 40 36 / 18%);
+  transform: translate(-50%, -50%);
 }
 
 .map-spinner {

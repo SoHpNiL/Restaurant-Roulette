@@ -1,42 +1,28 @@
-import Link from "next/link";
 import AucklandMapLoader from "./components/AucklandMapLoader";
+import Link from "next/link";
 
+/** Renders the map-only restaurant discovery homepage. */
 export default function Home() {
   return (
-    <main className="page-shell">
-      <nav className="nav">
-        <Link className="brand" href="/">
+    <main className="map-only-page">
+      <header className="map-page-header">
+        <Link className="map-page-brand" href="/" aria-label="Restaurant Roulette home">
           <span className="brand-mark" aria-hidden="true">
             ↗
           </span>
-          Restaurant Roulette
+          <span>Restaurant Roulette</span>
         </Link>
-        <span className="nav-note">A better way to pick dinner</span>
-      </nav>
-
-      <section className="hero" aria-labelledby="hero-title">
-        <div className="hero-copy">
-          <p className="eyebrow">No more “you choose”</p>
-          <h1 id="hero-title">
-            Let&apos;s find your
-            <span> next favourite.</span>
-          </h1>
-          <p className="intro">
-            Spin the wheel and discover a restaurant everyone can agree on.
-            Good food is just one decision away.
-          </p>
-          <button className="primary-button" type="button">
-            Spin the wheel <span aria-hidden="true">↗</span>
-          </button>
-        </div>
-
-        <AucklandMapLoader />
-      </section>
-
-      <footer className="footer">
-        <span>Made for indecisive diners.</span>
-        <span>© {new Date().getFullYear()} Restaurant Roulette</span>
-      </footer>
+        <label className="map-filter">
+          <span className="sr-only">Filter map locations</span>
+          <select defaultValue="all" aria-label="Filter map locations">
+            <option value="all">All locations</option>
+            <option value="restaurants">Restaurants</option>
+            <option value="cafes">Cafés</option>
+            <option value="takeaway">Takeaway</option>
+          </select>
+        </label>
+      </header>
+      <AucklandMapLoader />
     </main>
   );
 }

@@ -4,8 +4,8 @@ import { useEffect, useRef } from "react";
 
 const aucklandCenter: [number, number] = [-36.8485, 174.7633];
 const aucklandBounds: [[number, number], [number, number]] = [
-  [-37.15, 174.55],
-  [-36.65, 175.15],
+  [-37.02, 174.62],   
+  [-36.75, 175.05],   
 ];
 
 /** Displays the Auckland OpenStreetMap basemap without external place data. */

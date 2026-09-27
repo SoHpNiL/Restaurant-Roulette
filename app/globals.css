@@ -399,10 +399,17 @@ a {
 .home-footer {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 16px;
   border-top: 3px solid var(--ink);
   padding-top: 18px;
   color: var(--muted);
   font-size: 0.76rem;
+}
+
+.home-footer-contact {
+  color: inherit;
+  font: inherit;
 }
 
 .home-scroll-cue {
@@ -515,140 +522,20 @@ a {
   font-size: 1.2rem;
 }
 
-.map-preview {
-  position: relative;
+.home-map-card {
   min-height: 390px;
-  overflow: hidden;
   border: 3px solid var(--ink);
   border-radius: 26px;
-  background: #e9e3cf;
   box-shadow: 8px 9px 0 var(--ink);
 }
 
-.map-preview-water {
-  position: absolute;
-  top: -12%;
-  right: -10%;
-  width: 47%;
-  height: 130%;
-  border-left: 3px solid rgb(29 40 36 / 20%);
-  border-radius: 48% 0 0 44%;
-  background: var(--teal);
-  transform: rotate(11deg);
+.home-map-card .auckland-map {
+  height: 390px;
 }
 
-.map-preview-block {
-  position: absolute;
-  border: 2px solid rgb(29 40 36 / 14%);
-  background: rgb(255 253 246 / 36%);
-}
-
-.map-preview-block-one {
-  top: 12%;
-  left: 8%;
-  width: 34%;
-  height: 27%;
-  transform: rotate(-8deg);
-}
-
-.map-preview-block-two {
-  bottom: 12%;
-  left: 9%;
-  width: 42%;
-  height: 29%;
-  transform: rotate(7deg);
-}
-
-.map-preview-block-three {
-  top: 21%;
-  left: 45%;
-  width: 25%;
-  height: 45%;
-  transform: rotate(17deg);
-}
-
-.map-preview-road {
-  position: absolute;
-  width: 120%;
-  height: 11px;
-  border-top: 5px solid rgb(244 126 101 / 65%);
-  border-bottom: 2px solid rgb(255 253 246 / 90%);
-  transform-origin: left center;
-}
-
-.map-preview-road-one {
-  top: 29%;
-  left: -3%;
-  transform: rotate(16deg);
-}
-
-.map-preview-road-two {
-  top: 61%;
-  left: -4%;
-  transform: rotate(-12deg);
-}
-
-.map-preview-road-three {
-  top: 3%;
-  left: 44%;
-  height: 110%;
-  width: 9px;
-  border-top: 0;
-  border-right: 4px solid rgb(244 126 101 / 65%);
-  border-bottom: 0;
-  border-left: 2px solid rgb(255 253 246 / 90%);
-  transform: rotate(21deg);
-}
-
-.map-preview-pin {
-  position: absolute;
-  display: grid;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  border: 3px solid var(--ink);
-  border-radius: 50% 50% 50% 0;
-  background: var(--coral);
-  color: var(--cream);
-  font-size: 1.1rem;
-  box-shadow: 3px 3px 0 var(--ink);
-  transform: rotate(-45deg);
-}
-
-.map-preview-pin::first-letter {
-  transform: rotate(45deg);
-}
-
-.map-preview-pin-one {
-  top: 24%;
-  left: 22%;
-}
-
-.map-preview-pin-two {
-  right: 26%;
-  bottom: 22%;
-  background: var(--lime);
-  color: var(--ink);
-}
-
-.map-preview-pin-three {
-  top: 48%;
-  left: 58%;
-  background: var(--lavender);
-  color: var(--ink);
-}
-
-.map-preview-label {
-  position: absolute;
-  right: 24px;
-  bottom: 18px;
-  border: 2px solid var(--ink);
-  border-radius: 100px;
-  background: var(--cream);
-  font-size: 0.72rem;
-  font-weight: 900;
-  padding: 8px 13px;
-  text-transform: uppercase;
+.map-preview-section > .map-loading {
+  min-height: 390px;
+  border-width: 3px;
 }
 
 .home-footer-badge {
@@ -693,9 +580,14 @@ a {
   left: 24px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 20px;
   pointer-events: none;
+}
+
+.map-filter {
+  margin-right: auto;
+  margin-left: 44px;
 }
 
 .map-page-brand,
@@ -986,9 +878,25 @@ h1 span {
 }
 
 .restaurant-marker {
-  width: 42px !important;
-  height: 42px !important;
-  font-size: 1.35rem;
+  width: 42px;
+  height: 42px;
+  border-radius: 50% 50% 50% 0;
+  background: var(--coral);
+  color: var(--cream);
+  transform: rotate(-45deg);
+}
+
+.restaurant-marker > span {
+  transform: rotate(45deg);
+}
+
+.home-map-card .map-heading,
+.home-map-card .map-caption {
+  z-index: 500;
+}
+
+.home-map-card .map-kicker {
+  display: none;
 }
 
 .restaurant-cluster {
@@ -1147,7 +1055,15 @@ h1 span {
     margin: 40px auto 56px;
   }
 
-  .map-preview {
+  .home-map-card {
+    min-height: 300px;
+  }
+
+  .home-map-card .auckland-map {
+    height: 300px;
+  }
+
+  .map-preview-section > .map-loading {
     min-height: 300px;
   }
 

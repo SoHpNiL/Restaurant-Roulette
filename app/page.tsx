@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import ScrollHeader from "./components/ScrollHeader";
+import AucklandMapLoader from "./components/AucklandMapLoader";
 
 const rotatingWords = ["Gamble", "Discover", "Explore",];
 const heroImages = [
@@ -160,36 +161,38 @@ export default function Home() {
         </div>
       </section>
       <a className="home-scroll-cue" href="#map-preview">
-        <span>Scroll to explore</span>
+        <span>Scroll to Learn more</span>
       </a>
       <section className="map-preview-section" id="map-preview" aria-labelledby="map-preview-title">
         <div className="map-preview-copy">
           <p className="home-kicker">Around the corner</p>
           <h2 id="map-preview-title">Your next table is closer than you think.</h2>
           <p>
-            Browse local places, follow your curiosity, and let the map do the
-            choosing.
+            Browse local areas, let the algorithm choose local spots and discover something new!
           </p>
           <Link className="map-preview-link" href="/discover">
             Open the live map <span aria-hidden="true">↗</span>
           </Link>
         </div>
-        <div className="map-preview" aria-label="Illustrated static map of Auckland">
-          <div className="map-preview-water" />
-          <div className="map-preview-block map-preview-block-one" />
-          <div className="map-preview-block map-preview-block-two" />
-          <div className="map-preview-block map-preview-block-three" />
-          <div className="map-preview-road map-preview-road-one" />
-          <div className="map-preview-road map-preview-road-two" />
-          <div className="map-preview-road map-preview-road-three" />
-          <span className="map-preview-pin map-preview-pin-one">✦</span>
-          <span className="map-preview-pin map-preview-pin-two">✦</span>
-          <span className="map-preview-pin map-preview-pin-three">✦</span>
-          <span className="map-preview-label">Auckland</span>
-        </div>
+        <AucklandMapLoader preview />
       </section>
       <footer className="home-footer">
-        <span>Made for curious appetites</span>
+        <a
+          className="home-footer-contact"
+          href="https://www.linkedin.com/in/shopnil-rahman-nz/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Contact me <span aria-hidden="true">↗</span>
+        </a>
+        <a
+          className="home-footer-contact"
+          href="https://github.com/SoHpNiL/Restaurant-Roulette"
+          target="_blank"
+          rel="noreferrer"
+        >
+          How it works <span aria-hidden="true">↗</span>
+        </a>
         <span className="">Support Auckland, Not Fast Food</span>
       </footer>
     </main>

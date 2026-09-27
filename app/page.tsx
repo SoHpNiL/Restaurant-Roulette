@@ -115,7 +115,7 @@ export default function Home() {
             Stop wasting time eating the same food everyday.
             Gamble and discover a new favourite restaurant
           </p>
-          <Link className="spinner-button" href="/map" aria-label="Let's go to the restaurant map">
+          <Link className="spinner-button" href="/discover" aria-label="Let's go to the restaurant map">
             <span className="spinner" aria-hidden="true">
               <span className="spinner-wheel">
                 <span className="spinner-center" />
@@ -170,7 +170,7 @@ export default function Home() {
             Browse local places, follow your curiosity, and let the map do the
             choosing.
           </p>
-          <Link className="map-preview-link" href="/map">
+          <Link className="map-preview-link" href="/discover">
             Open the live map <span aria-hidden="true">↗</span>
           </Link>
         </div>

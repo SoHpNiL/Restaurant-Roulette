@@ -2,7 +2,7 @@ import AucklandMapLoader from "../components/AucklandMapLoader";
 import Link from "next/link";
 
 /** Renders the map-only restaurant discovery page. */
-export default function MapPage() {
+export default function DiscoverPage() {
   return (
     <main className="map-only-page">
       <header className="map-page-header">

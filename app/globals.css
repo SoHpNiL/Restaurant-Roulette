@@ -9,6 +9,13 @@
   --teal: #7ec4b6;
   --lavender: #c6b8e8;
   --sun: #ffc43d;
+  --font-family-sans: Arial, Helvetica, sans-serif;
+  --type-logo-title: 700 0.95rem / normal var(--font-family-sans);
+  --type-logo-title-letter-spacing: -0.02em;
+  --type-header: 800 clamp(3.5rem, 8vw, 7rem) / 0.88 var(--font-family-sans);
+  --type-sub-header: 700 clamp(2.3rem, 5vw, 4.8rem) / 0.92 var(--font-family-sans);
+  --type-body-paragraph: 400 1rem / 1.65 var(--font-family-sans);
+  --type-ui: 800 0.9rem / normal var(--font-family-sans);
 }
 
 * {
@@ -22,7 +29,7 @@ html {
 body {
   margin: 0;
   color: var(--ink);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-sans);
 }
 
 button,
@@ -123,8 +130,8 @@ a {
 
 .scroll-header-brand {
   color: var(--ink);
-  font-size: 0.85rem;
-  font-weight: 800;
+  font: var(--type-logo-title);
+  letter-spacing: var(--type-logo-title-letter-spacing);
 }
 
 .scroll-header-auth {
@@ -196,8 +203,7 @@ a {
   max-width: 410px;
   margin: 30px 0;
   color: var(--ink);
-  font-size: 1rem;
-  line-height: 1.65;
+  font: var(--type-body-paragraph);
 }
 
 .spinner-button {
@@ -212,8 +218,7 @@ a {
   box-shadow: 5px 6px 0 var(--teal);
   color: var(--cream);
   cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 800;
+  font: var(--type-ui);
   padding: 9px 18px;
   transform: rotate(-3deg);
   transition: background 300ms ease, box-shadow 300ms ease, opacity 900ms ease, transform 300ms ease;
@@ -485,15 +490,14 @@ a {
 .map-preview-copy h2 {
   max-width: 420px;
   margin: 0;
-  font-size: clamp(2.3rem, 5vw, 4.8rem);
+  font: var(--type-sub-header);
   letter-spacing: -0.08em;
-  line-height: 0.92;
 }
 
 .map-preview-copy > p:not(.home-kicker) {
   max-width: 330px;
   color: var(--ink);
-  line-height: 1.6;
+  font: var(--type-body-paragraph);
 }
 
 .map-preview-link {
@@ -709,8 +713,8 @@ a {
   align-items: center;
   gap: 10px;
   padding: 7px 16px 7px 7px;
-  font-size: 0.85rem;
-  font-weight: 800;
+  font: var(--type-logo-title);
+  letter-spacing: var(--type-logo-title-letter-spacing);
 }
 
 .map-page-brand .brand-mark {
@@ -721,8 +725,7 @@ a {
 .map-filter select {
   appearance: none;
   cursor: pointer;
-  font-size: 0.78rem;
-  font-weight: 700;
+  font: var(--type-ui);
   padding: 13px 36px 13px 16px;
   background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%),
     linear-gradient(135deg, var(--ink) 50%, transparent 50%);
@@ -768,9 +771,8 @@ a {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font: var(--type-logo-title);
+  letter-spacing: var(--type-logo-title-letter-spacing);
 }
 
 .brand-mark {
@@ -812,10 +814,8 @@ a {
 h1 {
   max-width: 640px;
   margin: 0;
-  font-size: clamp(3.5rem, 8vw, 7rem);
-  font-weight: 800;
+  font: var(--type-header);
   letter-spacing: -0.09em;
-  line-height: 0.88;
 }
 
 h1 span {
@@ -827,8 +827,7 @@ h1 span {
   max-width: 410px;
   margin: 30px 0;
   color: var(--muted);
-  font-size: 1rem;
-  line-height: 1.65;
+  font: var(--type-body-paragraph);
 }
 
 .primary-button {
@@ -1166,7 +1165,6 @@ h1 span {
 
   .map-page-brand {
     padding-right: 12px;
-    font-size: 0.76rem;
   }
 
   .map-filter select {

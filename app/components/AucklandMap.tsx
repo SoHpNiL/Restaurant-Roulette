@@ -16,11 +16,23 @@ const cbdRestaurants: { name: string; position: [number, number]; address: strin
 ];
 
 /** Displays the Auckland OpenStreetMap basemap without external place data. */
-export default function AucklandMap({ preview = false }: { preview?: boolean }) {
+export default function AucklandMap({
+  preview = false,
+  radiusKm,
+}: {
+  preview?: boolean;
+  radiusKm?: number;
+}) {
   const mapElement = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<import("leaflet").Map | null>(null);
+  const radiusCircleRef = useRef<import("leaflet").Circle | null>(null);
+  const radiusKmRef = useRef(radiusKm);
 
   useEffect(() => {
-    let map: import("leaflet").Map | undefined;
+    radiusKmRef.current = radiusKm;
+  }, [radiusKm]);
+
+  useEffect(() => {
     let cancelled = false;
 
     const loadMap = async () => {
@@ -38,13 +50,26 @@ export default function AucklandMap({ preview = false }: { preview?: boolean }) 
         zoomControl: !preview,
         scrollWheelZoom: !preview,
       }).setView(preview ? [-36.8466, 174.7668] : aucklandCenter, preview ? 14 : 11);
-      map = mapInstance;
+      mapRef.current = mapInstance;
 
       L.tileLayer("https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png", {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://stadiamaps.com/">Stadia Maps</a>',
         maxZoom: 19,
       }).addTo(mapInstance);
+
+      const initialRadiusKm = radiusKmRef.current;
+      if (!preview && initialRadiusKm !== undefined && initialRadiusKm > 0) {
+        radiusCircleRef.current = L.circle(aucklandCenter, {
+          radius: initialRadiusKm * 1000,
+          color: "#c65b20",
+          weight: 3,
+          opacity: 0.9,
+          fill: false,
+          dashArray: "8 8",
+          interactive: false,
+        }).addTo(mapInstance);
+      }
 
       if (preview) {
         const restaurantIcon = L.divIcon({
@@ -70,9 +95,57 @@ export default function AucklandMap({ preview = false }: { preview?: boolean }) 
 
     return () => {
       cancelled = true;
-      map?.remove();
+      mapRef.current?.remove();
+      mapRef.current = null;
+      radiusCircleRef.current = null;
     };
   }, [preview]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const updateRadiusCircle = async () => {
+      if (preview || radiusKm === undefined) {
+        return;
+      }
+
+      const mapInstance = mapRef.current;
+      if (!mapInstance) {
+        return;
+      }
+
+      if (radiusKm <= 0) {
+        radiusCircleRef.current?.remove();
+        radiusCircleRef.current = null;
+        return;
+      }
+
+      const L = (await import("leaflet")).default;
+      if (cancelled || mapRef.current !== mapInstance) {
+        return;
+      }
+
+      if (radiusCircleRef.current) {
+        radiusCircleRef.current.setRadius(radiusKm * 1000);
+      } else {
+        radiusCircleRef.current = L.circle(aucklandCenter, {
+          radius: radiusKm * 1000,
+          color: "#c65b20",
+          weight: 3,
+          opacity: 0.9,
+          fill: false,
+          dashArray: "8 8",
+          interactive: false,
+        }).addTo(mapInstance);
+      }
+    };
+
+    void updateRadiusCircle();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [preview, radiusKm]);
 
   return (
     <div

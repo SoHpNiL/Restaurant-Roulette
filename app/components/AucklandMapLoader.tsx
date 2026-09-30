@@ -8,6 +8,12 @@ const AucklandMap = dynamic(() => import("./AucklandMap"), {
 });
 
 /** Defers the browser-only Leaflet component until client-side rendering. */
-export default function AucklandMapLoader({ preview = false }: { preview?: boolean }) {
-  return <AucklandMap preview={preview} />;
+export default function AucklandMapLoader({
+  preview = false,
+  radiusKm,
+}: {
+  preview?: boolean;
+  radiusKm?: number;
+}) {
+  return <AucklandMap preview={preview} radiusKm={radiusKm} />;
 }

@@ -4,10 +4,15 @@ import "./Filter.css";
 import { useState } from "react";
 
 /** Renders a resizable panel on the discovery map. */
-export default function Filter() {
+export default function Filter({
+  maxDistance,
+  onDistanceChange,
+}: {
+  maxDistance: number;
+  onDistanceChange: (distance: number) => void;
+}) {
   const [isExpanded, setIsExpanded] = useState(false); //appends an is-expanded text to the css to show animation
   const [maxPrice, setMaxPrice] = useState(50);
-  const [maxDistance, setMaxDistance] = useState(30);
 
   return (
     <div className="filter-box">
@@ -55,16 +60,16 @@ export default function Filter() {
             id="filter-distance-range"
             type="range"
             min="0"
-            max="60"
+            max="25"
             value={maxDistance}
-            onChange={(event) => setMaxDistance(Number(event.target.value))}
+            onChange={(event) => onDistanceChange(Number(event.target.value))}
             style={{
-              background: `linear-gradient(to right, #c65b20 0%, #c65b20 ${(maxDistance / 60) * 100}%, var(--cream) ${(maxDistance / 60) * 100}%, var(--cream) 100%)`,
+              background: `linear-gradient(to right, #c65b20 0%, #c65b20 ${(maxDistance / 25) * 100}%, var(--cream) ${(maxDistance / 25) * 100}%, var(--cream) 100%)`,
             }}
           />
           <div className="filter-range-labels" aria-hidden="true">
             <span>0 km</span>
-            <span>60 km</span>
+            <span>25 km</span>
           </div>
         </div>
         <button type="button">Cuisine</button>

@@ -580,50 +580,32 @@ a {
   left: 24px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 20px;
   pointer-events: none;
 }
 
-.map-filter {
-  margin-right: auto;
-  margin-left: 44px;
-}
-
-.map-page-brand,
-.map-filter select {
+.map-page-brand {
   pointer-events: auto;
-  border: 0;
+  border: 3px solid var(--ink);
   border-radius: 100px;
   background: var(--cream);
-  box-shadow: 3px 3px 0 rgb(29 40 36 / 18%);
+  box-shadow: 3px 3px 0 var(--ink);
   color: var(--ink);
 }
 
 .map-page-brand {
+  position: fixed;
+  z-index: 1300;
+  right: 24px;
+  bottom: 24px;
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 16px 7px 7px;
-  font: var(--type-logo-title);
+  padding: 9px 18px;
+  font-size: 1.1rem;
+  font-weight: 700;
   letter-spacing: var(--type-logo-title-letter-spacing);
-}
-
-.map-page-brand .brand-mark {
-  width: 28px;
-  height: 28px;
-}
-
-.map-filter select {
-  appearance: none;
-  cursor: pointer;
-  font: var(--type-ui);
-  padding: 13px 36px 13px 16px;
-  background-image: linear-gradient(45deg, transparent 50%, var(--ink) 50%),
-    linear-gradient(135deg, var(--ink) 50%, transparent 50%);
-  background-position: calc(100% - 17px) 18px, calc(100% - 12px) 18px;
-  background-repeat: no-repeat;
-  background-size: 5px 5px, 5px 5px;
 }
 
 .sr-only {
@@ -1071,6 +1053,7 @@ h1 span {
     top: 12px;
     right: 12px;
     left: 12px;
+    justify-content: flex-end;
   }
 
   .scroll-header {
@@ -1080,12 +1063,11 @@ h1 span {
   }
 
   .map-page-brand {
-    padding-right: 12px;
-  }
-
-  .map-filter select {
-    max-width: 150px;
-    padding-right: 32px;
+    top: 12px;
+    right: 12px;
+    bottom: auto;
+    font: var(--type-logo-title);
+    padding: 9px 18px;
   }
 
   .restaurant-marker {

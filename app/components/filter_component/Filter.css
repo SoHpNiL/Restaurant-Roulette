@@ -14,8 +14,17 @@
   transition: width 600ms ease, height 600ms ease, border-radius 600ms ease;
 }
 
-.filter-box.is-expanded {
+.filter-box:has(.filter-resize-button[aria-expanded='true']) {
   width: min(680px, calc(100vw - 48px));
+}
+
+/* The area which will actually render and hold the filter UIs */
+.filter-area {
+  width: 270px;
+  height: 270px;
+  background: rgb(231, 231, 231);
+  border-radius: 24px;
+  place-items: calc(2 * 1);
 }
 
 /* Keep the resize control and its desktop icon visually separate from the panel. */
@@ -46,12 +55,12 @@
 }
 
 .filter-resize-icon-stretch {
-  background-image: url("../../../media/stretch.svg");
+  background-image: url('../../../media/stretch.svg');
   transition: transform 150ms ease;
 }
 
 /* Rotate the desktop stretch icon to reflect the expanded state. */
-.filter-box.is-expanded .filter-resize-icon-stretch {
+.filter-resize-button[aria-expanded='true'] .filter-resize-icon-stretch {
   transform: rotate(90deg);
 }
 
@@ -77,7 +86,7 @@
     transition: height 600ms ease;
   }
 
-  .filter-box.is-expanded {
+  .filter-box:has(.filter-resize-button[aria-expanded='true']) {
     height: 50vh;
     height: 50dvh;
     width: 100%;
@@ -107,14 +116,14 @@
     height: auto;
     transition: transform 600ms ease;
     transform: translateY(-4px);
-    background-image: url("../../../media/expand.svg");
+    background-image: url('../../../media/expand.svg');
   }
 
   .filter-resize-button:active {
     transform: translateX(-50%) scale(0.94);
   }
 
-  .filter-box.is-expanded .filter-resize-icon-expand {
+  .filter-resize-button[aria-expanded='true'] .filter-resize-icon-expand {
     transform: translateY(-4px) rotate(180deg);
   }
 }

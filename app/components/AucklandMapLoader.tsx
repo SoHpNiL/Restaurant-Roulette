@@ -11,9 +11,11 @@ const AucklandMap = dynamic(() => import("./AucklandMap"), {
 export default function AucklandMapLoader({
   preview = false,
   radiusKm,
+  locationCenter,
 }: {
   preview?: boolean;
   radiusKm?: number;
+  locationCenter?: [number, number];
 }) {
-  return <AucklandMap preview={preview} radiusKm={radiusKm} />;
+  return <AucklandMap preview={preview} radiusKm={radiusKm} locationCenter={locationCenter} />;
 }

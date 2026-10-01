@@ -3,10 +3,6 @@
 import { useEffect, useRef } from "react";
 
 const aucklandCenter: [number, number] = [-36.8485, 174.7633];
-const aucklandBounds: [[number, number], [number, number]] = [
-  [-37.02, 174.62],   
-  [-36.75, 175.05],   
-];
 const cbdRestaurants: { name: string; position: [number, number]; address: string }[] = [
   { name: "Ahi", position: [-36.8448, 174.7673], address: "Commercial Bay" },
   { name: "Amano", position: [-36.8453, 174.7691], address: "Tyler Street" },
@@ -19,18 +15,24 @@ const cbdRestaurants: { name: string; position: [number, number]; address: strin
 export default function AucklandMap({
   preview = false,
   radiusKm,
+  locationCenter,
 }: {
   preview?: boolean;
   radiusKm?: number;
+  locationCenter?: [number, number];
 }) {
   const mapElement = useRef<HTMLDivElement>(null);
   const mapRef = useRef<import("leaflet").Map | null>(null);
   const radiusCircleRef = useRef<import("leaflet").Circle | null>(null);
   const radiusKmRef = useRef(radiusKm);
+  const locationCenterRef = useRef(locationCenter);
 
   useEffect(() => {
     radiusKmRef.current = radiusKm;
   }, [radiusKm]);
+  useEffect(() => {
+    locationCenterRef.current = locationCenter;
+  }, [locationCenter]);
 
   useEffect(() => {
     let cancelled = false;
@@ -43,13 +45,14 @@ export default function AucklandMap({
       }
 
       const mapInstance = L.map(mapElement.current, {
-        maxBounds: L.latLngBounds(aucklandBounds),
-        maxBoundsViscosity: 1,
         minZoom: 10,
         maxZoom: 17,
         zoomControl: !preview,
         scrollWheelZoom: !preview,
-      }).setView(preview ? [-36.8466, 174.7668] : aucklandCenter, preview ? 14 : 11);
+      }).setView(
+        preview ? [-36.8466, 174.7668] : (locationCenterRef.current ?? aucklandCenter),
+        preview ? 14 : 11,
+      );
       mapRef.current = mapInstance;
 
       L.tileLayer("https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png", {
@@ -60,7 +63,7 @@ export default function AucklandMap({
 
       const initialRadiusKm = radiusKmRef.current;
       if (!preview && initialRadiusKm !== undefined && initialRadiusKm > 0) {
-        radiusCircleRef.current = L.circle(aucklandCenter, {
+        radiusCircleRef.current = L.circle(locationCenterRef.current ?? aucklandCenter, {
           radius: initialRadiusKm * 1000,
           color: "#c65b20",
           weight: 3,
@@ -114,6 +117,11 @@ export default function AucklandMap({
         return;
       }
 
+      if (locationCenter) {
+        mapInstance.flyTo(locationCenter, mapInstance.getZoom());
+        radiusCircleRef.current?.setLatLng(locationCenter);
+      }
+
       if (radiusKm <= 0) {
         radiusCircleRef.current?.remove();
         radiusCircleRef.current = null;
@@ -126,9 +134,10 @@ export default function AucklandMap({
       }
 
       if (radiusCircleRef.current) {
+        radiusCircleRef.current.setLatLng(locationCenter ?? aucklandCenter);
         radiusCircleRef.current.setRadius(radiusKm * 1000);
       } else {
-        radiusCircleRef.current = L.circle(aucklandCenter, {
+        radiusCircleRef.current = L.circle(locationCenter ?? aucklandCenter, {
           radius: radiusKm * 1000,
           color: "#c65b20",
           weight: 3,
@@ -145,7 +154,7 @@ export default function AucklandMap({
     return () => {
       cancelled = true;
     };
-  }, [preview, radiusKm]);
+  }, [preview, radiusKm, locationCenter]);
 
   return (
     <div

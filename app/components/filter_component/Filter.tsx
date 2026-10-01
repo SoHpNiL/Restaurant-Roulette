@@ -2,14 +2,17 @@
 
 import "./Filter.css";
 import { useState } from "react";
+import LocationButton from "../location_component/locationButton";
 
 /** Renders a resizable panel on the discovery map. */
 export default function Filter({
   maxDistance,
   onDistanceChange,
+  onLocationFound,
 }: {
   maxDistance: number;
   onDistanceChange: (distance: number) => void;
+  onLocationFound: (coordinates: [number, number]) => void;
 }) {
   const [isExpanded, setIsExpanded] = useState(false); //appends an is-expanded text to the css to show animation
   const [maxPrice, setMaxPrice] = useState(50);
@@ -26,6 +29,7 @@ export default function Filter({
         <span className="filter-resize-icon filter-resize-icon-stretch" aria-hidden="true" />
         <span className="filter-resize-icon filter-resize-icon-expand" aria-hidden="true" />
       </button>
+      <LocationButton onLocationFound={onLocationFound} />
       <span className="filter-title" aria-hidden="true">FILTERS 🔥</span>
       <div className="filter-mock-controls" role="group" aria-label="Mock filter controls">
         <div className="filter-range-control">

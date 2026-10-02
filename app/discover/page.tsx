@@ -1,28 +1,31 @@
+"use client";
+
+import { useState } from "react";
 import AucklandMapLoader from "../components/AucklandMapLoader";
+import Filter from "../components/filter_component/Filter";
 import Link from "next/link";
 
 /** Renders the map-only restaurant discovery page. */
 export default function DiscoverPage() {
+  const [maxDistance, setMaxDistance] = useState(0);
+  const [locationCenter, setLocationCenter] = useState<[number, number] | undefined>();
+
   return (
     <main className="map-only-page">
       <header className="map-page-header">
         <Link className="map-page-brand" href="/" aria-label="Restaurant Roulette home">
-          <span className="brand-mark" aria-hidden="true">
-            ↗
-          </span>
           <span>Restaurant Roulette</span>
         </Link>
-        <label className="map-filter">
-          <span className="sr-only">Filter map locations</span>
-          <select defaultValue="all" aria-label="Filter map locations">
-            <option value="all">All locations</option>
-            <option value="restaurants">Restaurants</option>
-            <option value="cafes">Cafés</option>
-            <option value="takeaway">Takeaway</option>
-          </select>
-        </label>
+        <Filter
+          maxDistance={maxDistance}
+          onDistanceChange={setMaxDistance}
+          onLocationFound={setLocationCenter}
+        />
       </header>
-      <AucklandMapLoader />
+      <AucklandMapLoader radiusKm={maxDistance} locationCenter={locationCenter} />
+      <div className="">
+
+      </div>
     </main>
   );
 }

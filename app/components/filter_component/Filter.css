@@ -1,0 +1,288 @@
+/* Desktop defaults: a square panel that widens when expanded. */
+.filter-box {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 280px;
+  height: 280px;
+  pointer-events: auto;
+  border: 3px solid var(--ink);
+  border-radius: 24px;
+  background: var(--sun);
+  box-shadow: 5px 5px 0 rgb(29 40 36 / 24%);
+  color: var(--ink);
+  transition: width 600ms ease, height 600ms ease, border-radius 600ms ease;
+}
+
+.filter-box:has(.filter-resize-button[aria-expanded='true']) {
+  width: min(680px, calc(100vw - 48px));
+}
+
+/* Keep mock options inside the filter box, below its resize control. */
+.filter-mock-controls {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow-y: hidden;
+  padding: 24px 72px 64px 24px;
+  display: flex;
+  align-content: start;
+  flex-wrap: wrap;
+  gap: 12px;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 200ms ease, visibility 200ms ease;
+}
+
+@media (min-width: 701px) {
+  .filter-box:not(:has(.filter-resize-button[aria-expanded='true'])) .filter-mock-controls {
+    gap: 8px;
+    padding: 16px 72px 64px 16px;
+  }
+
+  .filter-box:not(:has(.filter-resize-button[aria-expanded='true'])) .filter-mock-controls button {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+
+  .filter-box:not(:has(.filter-resize-button[aria-expanded='true'])) .filter-mock-controls button:nth-child(n + 5) {
+    display: none;
+  }
+}
+
+.filter-range-control {
+  display: grid;
+  flex: 1 0 100%;
+  gap: 4px;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.filter-range-value {
+  color: var(--muted);
+}
+
+.filter-range-slider {
+  height: 8px;
+  width: 100%;
+  margin: 0;
+  appearance: none;
+  border-radius: 999px;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+
+.filter-range-slider::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.filter-range-slider::-moz-range-track {
+  height: 8px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.filter-range-slider::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  margin-top: -5px;
+  appearance: none;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: #c65b20;
+  -webkit-appearance: none;
+}
+
+.filter-range-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: #c65b20;
+}
+
+.filter-range-slider:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 5px;
+}
+
+.filter-range-labels {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.filter-mock-controls button {
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  padding: 10px 16px;
+}
+
+.filter-mock-controls button:hover {
+  background: var(--ink);
+  color: var(--cream);
+}
+
+.filter-mock-controls button:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.filter-title {
+  position: absolute;
+  z-index: 1;
+  bottom: 22px;
+  left: 24px;
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  -webkit-text-stroke: 4.2px var(--ink);
+  paint-order: stroke fill;
+}
+
+@media (min-width: 701px) {
+  .filter-box:has(.filter-resize-button[aria-expanded='true']) .filter-title {
+    display: none;
+  }
+}
+
+/* Keep the resize control and its desktop icon visually separate from the panel. */
+.filter-resize-button {
+  position: absolute;
+  z-index: 1;
+  right: 16px;
+  bottom: 16px;
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--ink);
+  cursor: pointer;
+  padding: 8px;
+}
+
+.filter-resize-icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.filter-resize-icon-stretch {
+  background-image: url('../../../media/stretch.svg');
+  transition: transform 150ms ease;
+}
+
+/* Rotate the desktop stretch icon to reflect the expanded state. */
+.filter-resize-button[aria-expanded='true'] .filter-resize-icon-stretch {
+  transform: rotate(90deg);
+}
+
+.filter-resize-icon-expand {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .filter-title {
+    top: 22px;
+    bottom: auto;
+    left: 24px;
+  }
+
+  /* On mobile, the panel is a bottom drawer with a compact collapsed height. */
+  .filter-box {
+    position: fixed;
+    z-index: 1200;
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 84px;
+    border: 3px solid var(--ink);
+    border-radius: 24px 24px 0 0;
+    background: var(--sun);
+    box-shadow: 0 -5px 0 rgb(29 40 36 / 24%);
+    transition: height 600ms ease;
+  }
+
+  .filter-box:has(.filter-resize-button[aria-expanded='true']) {
+    height: 50vh;
+    height: 50dvh;
+    width: 100%;
+  }
+
+  .filter-resize-button {
+    top: 10px;
+    right: auto;
+    bottom: auto;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    transform: translateX(-50%);
+    transition: transform 600ms ease;
+  }
+
+  .filter-resize-icon-stretch {
+    display: none;
+  }
+
+  .filter-resize-icon-expand {
+    position: absolute;
+    inset: 2px;
+    display: block;
+    width: auto;
+    height: auto;
+    transition: transform 600ms ease;
+    transform: translateY(-4px);
+    background-image: url('../../../media/expand.svg');
+  }
+
+  .filter-resize-button:active {
+    transform: translateX(-50%) scale(0.94);
+  }
+
+  .filter-resize-button[aria-expanded='true'] .filter-resize-icon-expand {
+    transform: translateY(-4px) rotate(180deg);
+  }
+
+  .filter-mock-controls {
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    padding: 84px 24px 24px;
+  }
+
+  .filter-box:has(.filter-resize-button[aria-expanded='true']) .filter-mock-controls {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Respect users who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .filter-box,
+  .filter-mock-controls,
+  .filter-resize-button,
+  .filter-resize-icon {
+    transition: none;
+  }
+}

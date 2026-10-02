@@ -34,7 +34,7 @@ export default function LocationButton({ onLocationFound }: LocationButtonProps)
             setErrorMessage("Your location is currently unavailable. Try again.");
             break;
           case error.TIMEOUT:
-            setErrorMessage("The location request timed out. Try again.");
+            setErrorMessage("Request timed out. Try again.");
             break;
           default:
             setErrorMessage("Unable to get your location. Try again.");

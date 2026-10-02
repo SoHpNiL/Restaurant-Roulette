@@ -44,11 +44,14 @@ export default function AucklandMap({
         return;
       }
 
+      const aucklandBounds = L.latLngBounds([-37.5, 173.5], [-36.6, 175.8]);
       const mapInstance = L.map(mapElement.current, {
-        minZoom: 10,
+        minZoom: 8,
         maxZoom: 17,
         zoomControl: !preview,
         scrollWheelZoom: !preview,
+        maxBounds: preview ? undefined : aucklandBounds,
+        maxBoundsViscosity: preview ? undefined : 1,
       }).setView(
         preview ? [-36.8466, 174.7668] : (locationCenterRef.current ?? aucklandCenter),
         preview ? 14 : 11,
@@ -72,6 +75,10 @@ export default function AucklandMap({
           dashArray: "8 8",
           interactive: false,
         }).addTo(mapInstance);
+        mapInstance.fitBounds(radiusCircleRef.current.getBounds(), {
+          padding: [48, 48],
+          maxZoom: 17,
+        });
       }
 
       if (preview) {
@@ -118,8 +125,10 @@ export default function AucklandMap({
       }
 
       if (locationCenter) {
-        mapInstance.flyTo(locationCenter, mapInstance.getZoom());
         radiusCircleRef.current?.setLatLng(locationCenter);
+        if (radiusKm <= 0) {
+          mapInstance.flyTo(locationCenter, mapInstance.getZoom());
+        }
       }
 
       if (radiusKm <= 0) {
@@ -147,6 +156,11 @@ export default function AucklandMap({
           interactive: false,
         }).addTo(mapInstance);
       }
+
+      mapInstance.fitBounds(radiusCircleRef.current.getBounds(), {
+        padding: [48, 48],
+        maxZoom: 17,
+      });
     };
 
     void updateRadiusCircle();
